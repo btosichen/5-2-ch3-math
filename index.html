@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>五年級數學大冒險：容積與體積</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    /* 全局與 3D 動畫樣式 */
+    .preserve-3d { transform-style: preserve-3d; }
+    .perspective-1000 { perspective: 1000px; }
+    
+    .translate-z-24 { transform: translateZ(6rem); }
+    .-translate-z-24 { transform: translateZ(-6rem); }
+    .translate-x-24 { transform: translateX(6rem); }
+    .-translate-x-24 { transform: translateX(-6rem); }
+    .translate-y-24 { transform: translateY(6rem); }
+    .-translate-y-24 { transform: translateY(-6rem); }
+    
+    .translate-z-16 { transform: translateZ(4rem); }
+    .-translate-z-16 { transform: translateZ(-4rem); }
+    .translate-x-48 { transform: translateX(12rem); }
+    .-translate-x-16 { transform: translateX(-4rem); }
+    .translate-y-16 { transform: translateY(4rem); }
+    .-translate-y-16 { transform: translateY(-4rem); }
+    
+    .rotate-y-180 { transform: rotateY(180deg); }
+    .rotate-y-90 { transform: rotateY(90deg); }
+    .-rotate-y-90 { transform: rotateY(-90deg); }
+    .rotate-x-90 { transform: rotateX(90deg); }
+    .-rotate-x-90 { transform: rotateX(-90deg); }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-10px); }
+      50% { transform: translateX(10px); }
+      75% { transform: translateX(-10px); }
+    }
+    .animate-shake { animation: shake 0.5s ease-in-out; }
+    
+    .animate-fade-in { animation: fadeIn 0.3s ease-out forwards; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body class="font-sans antialiased text-gray-800 selection:bg-yellow-300 bg-sky-50 min-h-screen">
+
+  <!-- 共用導覽列 (預設隱藏，除了首頁以外的頁面顯示) -->
+  <div id="nav-bar" class="hidden items-center justify-between p-4 bg-white/80 backdrop-blur-md shadow-sm border-b-4 border-yellow-300 sticky top-0 z-50 rounded-b-3xl mb-6 max-w-5xl mx-auto">
+    <button onclick="showView('home')" class="flex items-center gap-2 text-sky-600 hover:text-sky-800 font-bold bg-sky-100 px-4 py-2 rounded-full transition-transform hover:-translate-x-1">
+      <i class="fa-solid fa-arrow-left"></i> 回基地
+    </button>
+    <h1 id="nav-title" class="text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-pink-500">
+      標題
+    </h1>
+    <div class="w-24"></div> <!-- 平衡排版用 -->
+  </div>
+
+  <!-- ================= 視圖 1: 學習地圖 (首頁) ================= -->
+  <div id="view-home" class="flex flex-col items-center py-10 px-4">
+    <div class="bg-white p-8 rounded-[3rem] shadow-2xl border-8 border-white outline outline-4 outline-sky-300 w-full max-w-4xl text-center relative overflow-hidden">
+      <!-- 背景裝飾 -->
+      <div class="absolute top-[-50px] left-[-50px] w-32 h-32 bg-yellow-200 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-pulse"></div>
+      <div class="absolute bottom-[-50px] right-[-50px] w-40 h-40 bg-pink-200 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-pulse delay-1000"></div>
+      
+      <h1 class="text-5xl md:text-6xl font-black text-sky-600 mb-4 tracking-wider drop-shadow-md">
+        數學大冒險
+      </h1>
+      <h2 class="text-2xl font-bold text-orange-400 mb-10">五年級：體積、容積、容量</h2>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 relative z-10">
+        <button onclick="showView('memory')" class="bg-yellow-400 text-white rounded-3xl p-6 shadow-lg transform transition-all duration-300 hover:scale-105 hover:-translate-y-2 hover:shadow-2xl border-b-8 border-black/20 flex flex-col items-center gap-4 group">
+          <div class="bg-white/20 p-4 rounded-full group-hover:animate-bounce"><i class="fa-solid fa-book-open text-4xl"></i></div>
+          <span class="text-2xl font-bold tracking-wide">超強記憶區</span>
+        </button>
+        <button onclick="showView('conversion')" class="bg-green-400 text-white rounded-3xl p-6 shadow-lg transform transition-all duration-300 hover:scale-105 hover:-translate-y-2 hover:shadow-2xl border-b-8 border-black/20 flex flex-col items-center gap-4 group">
+          <div class="bg-white/20 p-4 rounded-full group-hover:animate-bounce"><i class="fa-solid fa-sync-alt text-4xl"></i></div>
+          <span class="text-2xl font-bold tracking-wide">單位換算</span>
+        </button>
+        <button onclick="showView('formula')" class="bg-blue-400 text-white rounded-3xl p-6 shadow-lg transform transition-all duration-300 hover:scale-105 hover:-translate-y-2 hover:shadow-2xl border-b-8 border-black/20 flex flex-col items-center gap-4 group">
+          <div class="bg-white/20 p-4 rounded-full group-hover:animate-bounce"><i class="fa-solid fa-cube text-4xl"></i></div>
+          <span class="text-2xl font-bold tracking-wide">公式動畫</span>
+        </button>
+        <button onclick="startQuiz()" class="bg-purple-400 text-white rounded-3xl p-6 shadow-lg transform transition-all duration-300 hover:scale-105 hover:-translate-y-2 hover:shadow-2xl border-b-8 border-black/20 flex flex-col items-center gap-4 group">
+          <div class="bg-white/20 p-4 rounded-full group-hover:animate-bounce"><i class="fa-solid fa-flask text-4xl"></i></div>
+          <span class="text-2xl font-bold tracking-wide">互動題庫</span>
+        </button>
+        <button onclick="startGame()" class="bg-orange-400 text-white rounded-3xl p-6 shadow-lg transform transition-all duration-300 hover:scale-105 hover:-translate-y-2 hover:shadow-2xl border-b-8 border-black/20 flex flex-col items-center gap-4 group">
+          <div class="bg-white/20 p-4 rounded-full group-hover:animate-bounce"><i class="fa-solid fa-gamepad text-4xl"></i></div>
+          <span class="text-2xl font-bold tracking-wide">容積探險遊戲</span>
+        </button>
+        <button onclick="showView('record')" class="bg-pink-400 text-white rounded-3xl p-6 shadow-lg transform transition-all duration-300 hover:scale-105 hover:-translate-y-2 hover:shadow-2xl border-b-8 border-black/20 flex flex-col items-center gap-4 group">
+          <div class="bg-white/20 p-4 rounded-full group-hover:animate-bounce"><i class="fa-solid fa-award text-4xl"></i></div>
+          <span class="text-2xl font-bold tracking-wide">學習記錄</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= 視圖 2: 超強記憶區 ================= -->
+  <div id="view-memory" class="hidden pb-10">
+    <div class="max-w-4xl mx-auto px-4 grid gap-8">
+      <div class="bg-white rounded-3xl p-8 shadow-xl border-4 border-blue-200 flex flex-col md:flex-row items-center gap-8">
+        <div class="flex-1 text-center md:text-left">
+          <h3 class="text-3xl font-black text-blue-600 mb-4">📦 體積 (Volume)</h3>
+          <p class="text-xl font-bold text-gray-700 leading-relaxed">
+            物體<span class="text-red-500 bg-red-100 px-2 rounded-lg">佔據空間</span>的大小。<br/>
+            就像積木放在桌上，它佔了一個位子！
+          </p>
+        </div>
+        <div class="w-48 h-48 bg-blue-100 rounded-2xl flex items-center justify-center relative overflow-hidden">
+          <div class="w-24 h-24 bg-blue-500 rounded-lg shadow-lg animate-pulse transform rotate-12"></div>
+          <div class="absolute inset-0 border-4 border-dashed border-blue-400 animate-[spin_10s_linear_infinite] rounded-2xl"></div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-3xl p-8 shadow-xl border-4 border-green-200 flex flex-col md:flex-row-reverse items-center gap-8">
+        <div class="flex-1 text-center md:text-right">
+          <h3 class="text-3xl font-black text-green-600 mb-4">🧃 容積 (Internal Volume)</h3>
+          <p class="text-xl font-bold text-gray-700 leading-relaxed">
+            容器<span class="text-red-500 bg-red-100 px-2 rounded-lg">內部空間</span>的大小。<br/>
+            盒子裡面可以裝多少東西？記得要扣除盒子的厚度喔！
+          </p>
+        </div>
+        <div class="w-48 h-48 bg-green-100 rounded-2xl flex items-center justify-center relative">
+          <div class="w-32 h-32 border-8 border-green-500 rounded-lg shadow-inner bg-green-50 relative flex items-center justify-center">
+              <span class="font-bold text-green-700 text-lg">內部空間</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-3xl p-8 shadow-xl border-4 border-sky-200 flex flex-col md:flex-row items-center gap-8">
+        <div class="flex-1 text-center md:text-left">
+          <h3 class="text-3xl font-black text-sky-600 mb-4">💧 容量 (Capacity)</h3>
+          <p class="text-xl font-bold text-gray-700 leading-relaxed">
+            容器所能裝載<span class="text-red-500 bg-red-100 px-2 rounded-lg">液體（水、果汁）</span>的最大量。<br/>
+            這個水壺可以裝幾毫升的水？
+          </p>
+        </div>
+        <div class="w-48 h-48 bg-sky-100 rounded-2xl flex items-end justify-center relative pb-4">
+          <div class="w-20 h-32 border-4 border-b-8 border-gray-300 rounded-b-xl relative overflow-hidden bg-white/50 backdrop-blur-sm">
+              <div class="absolute bottom-0 w-full h-3/4 bg-sky-400 opacity-80 animate-[bounce_2s_ease-in-out_infinite]"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= 視圖 3: 單位換算 ================= -->
+  <div id="view-conversion" class="hidden pb-10">
+    <div class="max-w-3xl mx-auto px-4 text-center">
+      <div class="bg-white rounded-3xl p-8 shadow-xl border-4 border-green-300 mb-8">
+        <h2 class="text-2xl font-bold text-gray-700 mb-6">滑動看看單位的變化！</h2>
+        <input 
+          type="range" id="conv-slider"
+          min="0" max="10" step="0.5" value="1"
+          oninput="updateConversion(this.value)"
+          class="w-full h-4 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-green-500 mb-8"
+        />
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="bg-blue-100 p-6 rounded-2xl border-2 border-blue-300">
+            <p class="text-gray-500 font-bold mb-2">公升 (L)</p>
+            <p class="text-4xl font-black text-blue-600" id="conv-l">1</p>
+          </div>
+          <div class="flex items-center justify-center text-gray-400 font-bold text-2xl hidden md:flex"> = </div>
+          <div class="bg-sky-100 p-6 rounded-2xl border-2 border-sky-300">
+            <p class="text-gray-500 font-bold mb-2">毫升 (mL)</p>
+            <p class="text-4xl font-black text-sky-600" id="conv-ml">1000</p>
+          </div>
+          <div class="flex items-center justify-center text-gray-400 font-bold text-2xl hidden md:flex"> = </div>
+          <div class="bg-indigo-100 p-6 rounded-2xl border-2 border-indigo-300">
+            <p class="text-gray-500 font-bold mb-2">立方公分 (cm³)</p>
+            <p class="text-4xl font-black text-indigo-600" id="conv-cm3">1000</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-orange-100 rounded-3xl p-6 shadow-lg border-4 border-orange-300 inline-block text-left">
+        <h3 class="text-xl font-bold text-orange-800 mb-4 flex items-center gap-2">
+          <i class="fa-solid fa-star text-orange-500"></i> 記憶口訣
+        </h3>
+        <ul class="text-lg font-bold text-gray-700 space-y-3">
+          <li class="bg-white px-4 py-2 rounded-lg">✨ 1 毫升 (mL) = 1 cc = 1 立方公分 (cm³)</li>
+          <li class="bg-white px-4 py-2 rounded-lg">✨ 1 公升 (L) = 1000 毫升 (mL)</li>
+          <li class="bg-white px-4 py-2 rounded-lg">✨ 1 度水 = 1000 公升 = 1 立方公尺 (m³)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= 視圖 4: 公式動畫 ================= -->
+  <div id="view-formula" class="hidden pb-10">
+    <div class="max-w-4xl mx-auto px-4 grid gap-8">
+      <!-- 正方體 -->
+      <div class="bg-white rounded-3xl p-8 shadow-xl border-4 border-blue-300 flex flex-col items-center">
+        <h2 class="text-3xl font-black text-blue-600 mb-2">正方體體積</h2>
+        <div class="bg-blue-100 text-blue-800 font-bold text-2xl px-6 py-3 rounded-full mb-8 shadow-sm">
+          V = 邊長 × 邊長 × 邊長
+        </div>
+        
+        <div class="relative w-48 h-48 perspective-1000 mb-8">
+          <div class="w-full h-full relative preserve-3d animate-[spin_6s_linear_infinite]">
+            <div class="absolute w-full h-full bg-blue-500/80 border-2 border-blue-700 transform translate-z-24 flex items-center justify-center font-bold text-white text-xl">邊長</div>
+            <div class="absolute w-full h-full bg-blue-400/80 border-2 border-blue-700 transform -translate-z-24 rotate-y-180"></div>
+            <div class="absolute w-full h-full bg-blue-600/80 border-2 border-blue-700 transform translate-x-24 rotate-y-90"></div>
+            <div class="absolute w-full h-full bg-blue-300/80 border-2 border-blue-700 transform -translate-x-24 -rotate-y-90"></div>
+            <div class="absolute w-full h-full bg-blue-500/80 border-2 border-blue-700 transform -translate-y-24 rotate-x-90"></div>
+            <div class="absolute w-full h-full bg-blue-700/80 border-2 border-blue-700 transform translate-y-24 -rotate-x-90"></div>
+          </div>
+        </div>
+        <p class="text-gray-500 font-bold">每個邊都一樣長！就像一顆完美的骰子。</p>
+      </div>
+
+      <!-- 長方體 -->
+      <div class="bg-white rounded-3xl p-8 shadow-xl border-4 border-purple-300 flex flex-col items-center">
+        <h2 class="text-3xl font-black text-purple-600 mb-2">長方體體積</h2>
+        <div class="bg-purple-100 text-purple-800 font-bold text-2xl px-6 py-3 rounded-full mb-8 shadow-sm">
+          V = 長 × 寬 × 高
+        </div>
+        
+        <div class="relative w-64 h-32 perspective-1000 mb-12 mt-4">
+          <div class="w-full h-full relative preserve-3d animate-[spin_8s_linear_infinite_reverse]">
+            <div class="absolute w-64 h-32 bg-purple-500/80 border-2 border-purple-700 transform translate-z-16 flex flex-col items-center justify-center font-bold text-white">
+              <span>長</span>
+              <span class="text-sm opacity-80">(底面積的一部分)</span>
+            </div>
+            <div class="absolute w-64 h-32 bg-purple-400/80 border-2 border-purple-700 transform -translate-z-16 rotate-y-180"></div>
+            <div class="absolute w-32 h-32 bg-purple-600/80 border-2 border-purple-700 transform translate-x-48 rotate-y-90 flex items-center justify-center font-bold text-white left-[-64px]">寬</div>
+            <div class="absolute w-32 h-32 bg-purple-300/80 border-2 border-purple-700 transform -translate-x-16 -rotate-y-90"></div>
+            <div class="absolute w-64 h-32 bg-purple-500/80 border-2 border-purple-700 transform -translate-y-16 rotate-x-90"></div>
+            <div class="absolute w-64 h-32 bg-purple-700/80 border-2 border-purple-700 transform translate-y-16 -rotate-x-90 flex items-center justify-center font-bold text-white">高</div>
+          </div>
+        </div>
+        <p class="text-gray-500 font-bold">也可以想成：底面積 (長×寬) 再疊上高度 (高)。</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= 視圖 5: 互動題庫 ================= -->
+  <div id="view-quiz" class="hidden pb-10 flex flex-col items-center">
+    <div class="max-w-2xl w-full px-4 flex-1 flex flex-col">
+      <!-- 進度條 -->
+      <div class="w-full bg-gray-200 rounded-full h-4 mb-6 shadow-inner overflow-hidden border-2 border-purple-200">
+        <div id="quiz-progress" class="bg-gradient-to-r from-purple-400 to-pink-500 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+      </div>
+
+      <div class="bg-white rounded-[2rem] p-8 shadow-2xl border-4 border-purple-300 relative">
+        <div id="quiz-topic" class="absolute -top-5 -right-5 bg-yellow-400 text-yellow-900 font-black px-4 py-2 rounded-xl shadow-lg transform rotate-6 border-2 border-white">
+          題型
+        </div>
+        
+        <h2 id="quiz-question" class="text-2xl font-bold text-gray-800 mb-8 leading-relaxed">
+          題目內容
+        </h2>
+
+        <!-- 選項或輸入框將動態插入這裡 -->
+        <div id="quiz-options-container" class="grid gap-4"></div>
+
+        <div class="mt-8 flex justify-between items-center">
+          <button onclick="showQuizHint()" class="text-orange-500 font-bold hover:bg-orange-100 px-4 py-2 rounded-lg transition flex items-center gap-2">
+            💡 需要提示
+          </button>
+          
+          <button id="quiz-submit-btn" onclick="submitQuizAnswer()" disabled class="bg-purple-500 hover:bg-purple-600 disabled:opacity-50 text-white font-black text-xl py-3 px-8 rounded-full shadow-lg transform transition hover:scale-105">
+            確定答案
+          </button>
+        </div>
+
+        <!-- 提示區 -->
+        <div id="quiz-hint" class="hidden mt-4 p-4 bg-orange-50 border-2 border-orange-200 rounded-xl text-orange-800 font-bold animate-pulse">
+        </div>
+
+        <!-- 回饋覆蓋層 -->
+        <div id="quiz-feedback" class="hidden absolute inset-0 bg-white/95 backdrop-blur-sm rounded-[2rem] flex flex-col items-center justify-center z-10 animate-fade-in">
+          <div id="feedback-icon-correct" class="hidden text-green-500 text-8xl mb-4 animate-[bounce_0.5s_ease-out]"><i class="fa-solid fa-check-circle"></i></div>
+          <div id="feedback-icon-wrong" class="hidden text-red-500 text-8xl mb-4 animate-shake"><i class="fa-solid fa-times-circle"></i></div>
+          <h3 id="feedback-title" class="text-4xl font-black"></h3>
+          <p id="feedback-desc" class="text-xl font-bold mt-4 text-gray-700 hidden"></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= 視圖 6: 遊戲模式 ================= -->
+  <div id="view-game" class="hidden pb-10">
+    <div class="max-w-3xl mx-auto px-4 text-center">
+      <div class="bg-white rounded-[3rem] p-8 shadow-2xl border-8 border-orange-300 relative overflow-hidden">
+        
+        <!-- 通關畫面 -->
+        <div id="game-win" class="hidden py-20">
+          <i class="fa-solid fa-award text-yellow-400 text-8xl mb-6 animate-bounce"></i>
+          <h2 class="text-4xl font-black text-orange-600 mb-4">恭喜通關所有水箱任務！</h2>
+          <button onclick="showView('home')" class="bg-orange-500 text-white font-bold py-3 px-8 rounded-full text-xl mt-4">回基地</button>
+        </div>
+
+        <!-- 遊戲畫面 -->
+        <div id="game-play">
+          <div class="flex justify-between items-center mb-6">
+            <h2 id="game-level-badge" class="text-2xl font-black text-orange-700 bg-orange-100 px-6 py-2 rounded-full">第 1 關</h2>
+            <span id="game-desc" class="text-gray-500 font-bold">任務說明</span>
+          </div>
+
+          <div class="mb-8">
+            <p id="game-size-text" class="text-xl font-bold text-gray-800 mb-2">水箱尺寸</p>
+            <p class="text-lg font-bold text-sky-600">請問這個水箱的容積是多少立方公分？ (需要多少水才能裝滿？)</p>
+          </div>
+
+          <!-- 互動水箱視覺化 -->
+          <div class="w-64 h-64 border-8 border-gray-300 rounded-b-3xl mx-auto relative overflow-hidden bg-sky-50 mb-8 shadow-inner">
+            <!-- 水的特效 -->
+            <div id="game-water" class="absolute bottom-0 left-0 w-full bg-blue-500 transition-all duration-1000 ease-in-out opacity-80" style="height: 0%">
+              <div class="absolute top-0 left-0 w-full h-4 bg-white/30 rounded-full animate-pulse"></div>
+            </div>
+            <!-- 標示 -->
+            <div id="game-water-label" class="absolute inset-0 flex items-center justify-center font-black text-3xl text-gray-400 pointer-events-none opacity-50 z-0">
+              10 × 10 × 10
+            </div>
+          </div>
+
+          <div class="flex items-center justify-center gap-4">
+            <input type="number" id="game-input" placeholder="輸入容積..." class="text-2xl font-bold p-4 border-4 border-orange-200 rounded-2xl w-48 text-center focus:border-orange-500 outline-none"/>
+            <span class="text-xl font-bold text-gray-600">cm³</span>
+            <button onclick="checkGameAnswer()" class="bg-sky-500 hover:bg-sky-600 text-white font-black text-xl py-4 px-8 rounded-2xl shadow-lg transform transition hover:scale-105 active:scale-95 flex items-center gap-2">
+              <i class="fa-solid fa-tint"></i> 注水！
+            </button>
+          </div>
+
+          <!-- 狀態訊息 -->
+          <div id="game-msg-correct" class="hidden absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-5xl font-black text-white drop-shadow-[0_5px_5px_rgba(0,0,0,0.5)] z-20 animate-bounce" style="text-shadow: 2px 2px 4px #000;">
+            裝滿啦！✨
+          </div>
+          <div id="game-msg-wrong" class="hidden absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-5xl font-black text-red-500 bg-white/95 px-8 py-4 rounded-3xl z-20 border-4 border-red-500 animate-shake">
+            水加錯啦！💦
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= 視圖 7: 學習記錄 ================= -->
+  <div id="view-record" class="hidden pb-10 flex flex-col items-center">
+    <div class="bg-white rounded-[3rem] p-10 shadow-2xl border-8 border-pink-300 w-full max-w-2xl text-center mx-4">
+      <i class="fa-solid fa-award text-yellow-500 text-6xl mb-4"></i>
+      <h2 class="text-4xl font-black text-pink-600 mb-8">測驗完成結算</h2>
+      
+      <div class="bg-gray-50 rounded-2xl p-6 mb-8 border-2 border-gray-200 text-left space-y-4">
+        <div class="flex justify-between items-center text-xl font-bold border-b-2 border-gray-200 pb-2">
+          <span class="text-gray-500">總分數：</span>
+          <span class="text-3xl text-green-600" id="record-score">0 分</span>
+        </div>
+        <div class="flex justify-between items-center text-lg font-bold">
+          <span class="text-gray-500">答對題數：</span>
+          <span class="text-blue-600" id="record-correct">0 題</span>
+        </div>
+        <div class="flex justify-between items-center text-lg font-bold">
+          <span class="text-gray-500">錯誤題數：</span>
+          <span class="text-red-500" id="record-wrong">0 題</span>
+        </div>
+      </div>
+
+      <div id="record-form">
+        <div class="mb-6">
+          <label class="block text-xl font-bold text-gray-700 mb-2">請輸入你的名字來儲存記錄：</label>
+          <input type="text" id="student-name" placeholder="例如：王小明" class="w-full text-center text-2xl font-bold p-4 border-4 border-pink-200 rounded-2xl focus:border-pink-500 outline-none"/>
+        </div>
+        <button id="save-btn" onclick="saveToGoogleSheet()" class="w-full bg-pink-500 hover:bg-pink-600 text-white font-black text-2xl py-4 rounded-full shadow-lg transition transform hover:scale-105 flex justify-center items-center gap-2">
+          <i class="fa-solid fa-save"></i> <span id="save-btn-text">儲存成績到雲端</span>
+        </button>
+      </div>
+
+      <div id="record-success" class="hidden bg-green-100 border-4 border-green-400 rounded-2xl p-6 text-green-700 font-bold text-xl flex flex-col items-center gap-4">
+        <i class="fa-solid fa-check-circle text-4xl"></i>
+        <p id="record-success-text">成績已成功儲存！</p>
+        <button onclick="showView('home')" class="mt-4 bg-green-500 text-white px-6 py-2 rounded-full hover:bg-green-600 transition">
+          回到主畫面繼續探索
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Javascript 邏輯區塊 -->
+  <script>
+    // ================== 設定您的 Google Apps Script 網址 ==================
+    // 請在這裡填入您部署 Google Apps Script 後取得的網址 (Web App URL)
+    const GAS_URL = 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE'; 
+    // ======================================================================
+
+    // 題目資料庫
+    const quizData = [
+      { id: 1, type: 'choice', topic: '概念', question: '「物體所佔空間的大小」稱為什麼？', options: ['體積', '容積', '容量', '面積'], answer: '體積', hint: '想一想，積木放在桌上佔了多少空間？' },
+      { id: 2, type: 'choice', topic: '概念', question: '「容器內部空間的大小」稱為什麼？', options: ['體積', '容積', '容量', '長度'], answer: '容積', hint: '盒子「裡面」可以裝多少東西的空間喔！' },
+      { id: 3, type: 'choice', topic: '概念', question: '「容器所能裝載液體的最大量」稱為什麼？', options: ['體積', '容積', '容量', '重量'], answer: '容量', hint: '水壺可以裝多少「水」，就是它的什麼？' },
+      { id: 4, type: 'choice', topic: '概念', question: '下列哪一個物品我們通常會討論它的「容量」？', options: ['木塊', '保特瓶', '實心鐵球', '書本'], answer: '保特瓶', hint: '哪一個可以裝水呢？' },
+      { id: 5, type: 'choice', topic: '概念', question: '同樣形狀和大小的空盒子和實心木塊，什麼是一樣的？', options: ['體積', '容積', '容量', '重量'], answer: '體積', hint: '它們佔據的「外部空間」是一樣大的。' },
+      { id: 6, type: 'choice', topic: '換算', question: '1 公升 (L) 等於多少毫升 (mL)？', options: ['10', '100', '1000', '10000'], answer: '1000', hint: 'Kilo 是千，所以 1L 有 1000 個小 mL 喔！' },
+      { id: 7, type: 'choice', topic: '換算', question: '1 毫升 (mL) 的水，體積大約是多少？', options: ['1 立方公分', '1 立方公尺', '10 立方公分', '100 立方公分'], answer: '1 立方公分', hint: '1 mL = 1 cm³ = 1 cc' },
+      { id: 8, type: 'input', topic: '換算', question: '2.5 公升 = [?] 毫升', answer: '2500', hint: '把公升乘以 1000 就是毫升囉！' },
+      { id: 9, type: 'input', topic: '換算', question: '3000 立方公分 = [?] 公升', answer: '3', hint: '1000 立方公分 = 1 公升。' },
+      { id: 10, type: 'choice', topic: '換算', question: '醫生說要喝 500 cc 的水，500 cc 等於多少毫升？', options: ['5', '50', '500', '5000'], answer: '500', hint: 'cc 和毫升 (mL) 是一模一樣的單位！' },
+      { id: 11, type: 'input', topic: '計算', question: '一個邊長 5 公分的正方體，體積是多少立方公分？', answer: '125', hint: '正方體體積 = 邊長 × 邊長 × 邊長 (5×5×5)' },
+      { id: 12, type: 'input', topic: '計算', question: '一個長 10 公分、寬 4 公分、高 3 公分的長方體，體積是多少立方公分？', answer: '120', hint: '長方體體積 = 長 × 寬 × 高' },
+      { id: 13, type: 'choice', topic: '計算', question: '有兩個正方體，A的邊長是2公分，B的邊長是4公分。B的體積是A的幾倍？', options: ['2倍', '4倍', '8倍', '16倍'], answer: '8倍', hint: '算算看：A體積是8，B體積是64。' },
+      { id: 14, type: 'input', topic: '計算', question: '把一個體積 300 立方公分的鐵塊丟入裝滿水的水桶中，會溢出幾毫升的水？', answer: '300', hint: '物體的體積 = 排開水的體積。1 立方公分 = 1 毫升。' },
+      { id: 15, type: 'input', topic: '計算', question: '底面積是 25 平方公分，高是 4 公分的長方體，體積是多少？', answer: '100', hint: '體積 = 底面積 × 高' },
+      { id: 16, type: 'choice', topic: '應用', question: '自來水公司收費單上的「1度水」是多少？', options: ['1 公升', '100 公升', '1000 公升 (1立方公尺)', '1 毫升'], answer: '1000 公升 (1立方公尺)', hint: '1度水非常多喔！等於一個邊長1公尺的大水箱裝滿水。' },
+      { id: 17, type: 'input', topic: '應用', question: '一個內部空間長 20 公分、寬 10 公分、高 15 公分的水箱，最多可以裝幾毫升的水？', answer: '3000', hint: '先算出容積 (20×10×15)，再換成毫升。' },
+      { id: 18, type: 'input', topic: '應用', question: '承上題，3000 毫升等於幾公升？', answer: '3', hint: '毫升除以 1000 就是公升。' },
+      { id: 19, type: 'choice', topic: '應用', question: '小明每天要喝 2 公升的水，他有一個 500 毫升的水壺，他每天要喝幾壺水才夠？', options: ['2壺', '3壺', '4壺', '5壺'], answer: '4壺', hint: '先把 2 公升換成 2000 毫升，再除以 500。' },
+      { id: 20, type: 'choice', topic: '應用', question: '做一個無蓋的木盒，外面量長 12 公分、寬 12 公分、高 11 公分，木板厚度 1 公分。木盒的容積是多少？', options: ['1000 立方公分', '1200 立方公分', '1440 立方公分', '1584 立方公分'], answer: '1000 立方公分', hint: '內部寬 = 12 - 1×2 = 10，內部高 = 11 - 1 (無蓋) = 10。容積 = 10×10×10。' }
+    ];
+
+    // 遊戲關卡
+    const gameLevels = [
+      { id: 1, length: 10, width: 10, height: 10, target: 1000, desc: '任務一：小水箱 (邊長皆10cm)' },
+      { id: 2, length: 20, width: 10, height: 5, target: 1000, desc: '任務二：扁扁箱 (長20 寬10 高5)' },
+      { id: 3, length: 50, width: 20, height: 10, target: 10000, desc: '任務三：超級大水塔 (長50 寬20 高10)' }
+    ];
+
+    // 狀態變數
+    let state = {
+      quizIndex: 0,
+      score: 0,
+      wrongAnswers: 0,
+      wrongDetails: [], // 記錄答錯詳細資訊
+      currentAnswer: '',
+      gameLevel: 0
+    };
+
+    // 視圖切換邏輯
+    const views = ['home', 'memory', 'conversion', 'formula', 'quiz', 'game', 'record'];
+    function showView(viewId) {
+      // 隱藏所有
+      views.forEach(v => document.getElementById(`view-${v}`).classList.add('hidden'));
+      // 顯示目標
+      document.getElementById(`view-${viewId}`).classList.remove('hidden');
+      
+      // 處理導覽列
+      const navBar = document.getElementById('nav-bar');
+      const navTitle = document.getElementById('nav-title');
+      if (viewId === 'home') {
+        navBar.classList.add('hidden');
+        document.body.className = "font-sans antialiased text-gray-800 selection:bg-yellow-300 bg-sky-50 min-h-screen";
+      } else {
+        navBar.classList.remove('hidden');
+        navBar.classList.add('flex');
+        
+        if(viewId === 'memory') { navTitle.innerText = "超強記憶區"; document.body.className = "font-sans antialiased text-gray-800 bg-yellow-50 min-h-screen"; }
+        if(viewId === 'conversion') { navTitle.innerText = "魔法換算機"; document.body.className = "font-sans antialiased text-gray-800 bg-green-50 min-h-screen"; }
+        if(viewId === 'formula') { navTitle.innerText = "體積變身動畫"; document.body.className = "font-sans antialiased text-gray-800 bg-blue-50 min-h-screen"; }
+        if(viewId === 'quiz') { navTitle.innerText = "超級題庫挑戰"; document.body.className = "font-sans antialiased text-gray-800 bg-purple-50 min-h-screen"; }
+        if(viewId === 'game') { navTitle.innerText = "💧 容積探險家"; document.body.className = "font-sans antialiased text-gray-800 bg-orange-50 min-h-screen"; }
+        if(viewId === 'record') { navTitle.innerText = "學習成績單"; document.body.className = "font-sans antialiased text-gray-800 bg-pink-50 min-h-screen"; updateRecordView(); }
+      }
+    }
+
+    // --- 單位換算邏輯 ---
+    function updateConversion(val) {
+      document.getElementById('conv-l').innerText = val;
+      document.getElementById('conv-ml').innerText = val * 1000;
+      document.getElementById('conv-cm3').innerText = val * 1000;
+    }
+
+    // --- 互動題庫邏輯 ---
+    function startQuiz() {
+      state.quizIndex = 0;
+      state.score = 0;
+      state.wrongAnswers = 0;
+      state.wrongDetails = [];
+      renderQuiz();
+      showView('quiz');
+    }
+
+    function renderQuiz() {
+      const q = quizData[state.quizIndex];
+      state.currentAnswer = '';
+      
+      // 更新標題與進度
+      document.getElementById('nav-title').innerText = `超級題庫挑戰 (${state.quizIndex + 1}/${quizData.length})`;
+      document.getElementById('quiz-progress').style.width = `${((state.quizIndex) / quizData.length) * 100}%`;
+      document.getElementById('quiz-topic').innerText = q.topic;
+      document.getElementById('quiz-question').innerText = q.question;
+      
+      // 隱藏提示與回饋
+      document.getElementById('quiz-hint').classList.add('hidden');
+      document.getElementById('quiz-feedback').classList.add('hidden');
+      
+      // 渲染選項
+      const container = document.getElementById('quiz-options-container');
+      container.innerHTML = '';
+      
+      if (q.type === 'choice') {
+        q.options.forEach(opt => {
+          const btn = document.createElement('button');
+          btn.innerText = opt;
+          btn.className = "p-4 rounded-xl font-bold text-lg text-left transition-all border-4 bg-gray-50 border-gray-200 text-gray-600 hover:border-purple-300 hover:bg-purple-50 quiz-option-btn";
+          btn.onclick = () => selectOption(opt, btn);
+          container.appendChild(btn);
+        });
+      } else {
+        const input = document.createElement('input');
+        input.type = "number";
+        input.placeholder = "輸入數字...";
+        input.className = "w-full text-center text-3xl font-bold p-4 border-4 border-purple-200 rounded-2xl focus:border-purple-500 focus:outline-none bg-purple-50 text-purple-700";
+        input.oninput = (e) => {
+          state.currentAnswer = e.target.value;
+          document.getElementById('quiz-submit-btn').disabled = !state.currentAnswer;
+        };
+        container.appendChild(input);
+      }
+      
+      document.getElementById('quiz-submit-btn').disabled = true;
+    }
+
+    function selectOption(opt, btnEl) {
+      state.currentAnswer = opt;
+      // 重置所有按鈕樣式
+      document.querySelectorAll('.quiz-option-btn').forEach(b => {
+        b.className = "p-4 rounded-xl font-bold text-lg text-left transition-all border-4 bg-gray-50 border-gray-200 text-gray-600 hover:border-purple-300 hover:bg-purple-50 quiz-option-btn";
+      });
+      // 設置選中樣式
+      btnEl.className = "p-4 rounded-xl font-bold text-lg text-left transition-all border-4 bg-purple-100 border-purple-500 text-purple-700 shadow-md transform scale-[1.02] quiz-option-btn";
+      document.getElementById('quiz-submit-btn').disabled = false;
+    }
+
+    function showQuizHint() {
+      const q = quizData[state.quizIndex];
+      const hintEl = document.getElementById('quiz-hint');
+      hintEl.innerText = `👉 提示：${q.hint}`;
+      hintEl.classList.remove('hidden');
+    }
+
+    function submitQuizAnswer() {
+      if (!state.currentAnswer) return;
+      
+      const q = quizData[state.quizIndex];
+      const isCorrect = state.currentAnswer === q.answer;
+      
+      const feedbackEl = document.getElementById('quiz-feedback');
+      const titleEl = document.getElementById('feedback-title');
+      const descEl = document.getElementById('feedback-desc');
+      const iconCorrect = document.getElementById('feedback-icon-correct');
+      const iconWrong = document.getElementById('feedback-icon-wrong');
+      
+      feedbackEl.classList.remove('hidden');
+      
+      if (isCorrect) {
+        state.score += 5;
+        titleEl.innerText = "太棒了！答對了！";
+        titleEl.className = "text-4xl font-black text-green-600";
+        iconCorrect.classList.remove('hidden');
+        iconWrong.classList.add('hidden');
+        descEl.classList.add('hidden');
+      } else {
+        state.wrongAnswers += 1;
+        // 記錄錯誤資訊提供給 GAS
+        state.wrongDetails.push(`第${state.quizIndex+1}題: ${q.question} \n您的答案: ${state.currentAnswer} \n正確解答: ${q.answer}\n`);
+
+        titleEl.innerText = "哎呀！再接再厲！";
+        titleEl.className = "text-4xl font-black text-red-600";
+        iconWrong.classList.remove('hidden');
+        iconCorrect.classList.add('hidden');
+        descEl.innerText = `正確答案是：${q.answer}`;
+        descEl.classList.remove('hidden');
+      }
+
+      // 1.5秒後進入下一題或結算
+      setTimeout(() => {
+        if (state.quizIndex < quizData.length - 1) {
+          state.quizIndex++;
+          renderQuiz();
+        } else {
+          showView('record');
+        }
+      }, 1500);
+    }
+
+    // --- 遊戲模式邏輯 ---
+    function startGame() {
+      state.gameLevel = 0;
+      renderGame();
+      showView('game');
+    }
+
+    function renderGame() {
+      const level = gameLevels[state.gameLevel];
+      document.getElementById('game-win').classList.add('hidden');
+      document.getElementById('game-play').classList.remove('hidden');
+      
+      document.getElementById('game-level-badge').innerText = `第 ${state.gameLevel + 1} 關`;
+      document.getElementById('game-desc').innerText = level.desc;
+      document.getElementById('game-size-text').innerText = `水箱尺寸：長 ${level.length} cm, 寬 ${level.width} cm, 高 ${level.height} cm`;
+      document.getElementById('game-water-label').innerText = `${level.length} × ${level.width} × ${level.height}`;
+      
+      document.getElementById('game-water').style.height = '0%';
+      document.getElementById('game-input').value = '';
+    }
+
+    function checkGameAnswer() {
+      const level = gameLevels[state.gameLevel];
+      const inputVal = parseInt(document.getElementById('game-input').value);
+      
+      if (inputVal === level.target) {
+        document.getElementById('game-water').style.height = '100%';
+        document.getElementById('game-msg-correct').classList.remove('hidden');
+        
+        setTimeout(() => {
+          document.getElementById('game-msg-correct').classList.add('hidden');
+          if (state.gameLevel < gameLevels.length - 1) {
+            state.gameLevel++;
+            renderGame();
+          } else {
+            document.getElementById('game-play').classList.add('hidden');
+            document.getElementById('game-win').classList.remove('hidden');
+          }
+        }, 2000);
+      } else {
+        document.getElementById('game-water').style.height = '30%';
+        document.getElementById('game-msg-wrong').classList.remove('hidden');
+        
+        setTimeout(() => {
+          document.getElementById('game-msg-wrong').classList.add('hidden');
+          document.getElementById('game-water').style.height = '0%';
+        }, 1500);
+      }
+    }
+
+    // --- 記錄與 Google Sheets 串接邏輯 ---
+    function updateRecordView() {
+      document.getElementById('record-score').innerText = `${state.score} 分`;
+      document.getElementById('record-correct').innerText = `${quizData.length - state.wrongAnswers} 題`;
+      document.getElementById('record-wrong').innerText = `${state.wrongAnswers} 題`;
+      
+      document.getElementById('record-form').classList.remove('hidden');
+      document.getElementById('record-success').classList.add('hidden');
+      document.getElementById('student-name').value = '';
+      document.getElementById('save-btn').disabled = false;
+      document.getElementById('save-btn').className = "w-full bg-pink-500 hover:bg-pink-600 text-white font-black text-2xl py-4 rounded-full shadow-lg transition transform hover:scale-105 flex justify-center items-center gap-2";
+      document.getElementById('save-btn-text').innerText = "儲存成績到雲端";
+    }
+
+    function saveToGoogleSheet() {
+      const name = document.getElementById('student-name').value.trim();
+      if (!name) {
+        alert("請輸入您的名字喔！");
+        return;
+      }
+
+      const btn = document.getElementById('save-btn');
+      btn.disabled = true;
+      btn.className = "w-full bg-gray-400 cursor-not-allowed text-white font-black text-2xl py-4 rounded-full shadow-lg flex justify-center items-center gap-2";
+      document.getElementById('save-btn-text').innerText = "傳送資料中...";
+
+      const payload = {
+        name: name,
+        correctCount: quizData.length - state.wrongAnswers,
+        wrongDetails: state.wrongDetails.length > 0 ? state.wrongDetails.join('\n') : '全對無錯誤',
+        score: state.score
+      };
+
+      if(GAS_URL === 'https://script.google.com/macros/s/AKfycbzBLFKHIIE1YgyT84HnAYBJq4bj6O2-ncaqF8id45iwJN9O9D5cscXu-oKlcbJp4_wR-g/exec') {
+        // 如果沒有填寫 GAS 網址，就用模擬動畫代替
+        setTimeout(() => showSuccessRecord(name), 1500);
+        console.log("模擬送出的資料：", payload);
+      } else {
+        // 實際發送給 Google Apps Script
+        fetch(GAS_URL, {
+          method: 'POST',
+          // 使用 text/plain 避免跨網域預檢請求 (CORS preflight) 的問題
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify(payload)
+        })
+        .then(res => res.json())
+        .then(data => {
+          if(data.status === 'success') {
+            showSuccessRecord(name);
+          } else {
+            alert("儲存失敗，請稍後再試！");
+            updateRecordView(); // 恢復按鈕狀態
+          }
+        })
+        .catch(err => {
+          console.error('Error:', err);
+          alert("網路連線錯誤，儲存失敗！");
+          updateRecordView();
+        });
+      }
+    }
+
+    function showSuccessRecord(name) {
+      document.getElementById('record-form').classList.add('hidden');
+      document.getElementById('record-success').classList.remove('hidden');
+      document.getElementById('record-success-text').innerText = `${name} 的成績已成功儲存！`;
+    }
+
+  </script>
+</body>
+</html>
